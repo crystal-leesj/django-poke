@@ -79,14 +79,17 @@ class PokeManager(models.Manager):
 
     def get_poke_history(self, from_user, to_user):
         try:
-            poke = Poke.objects.get(from_user=from_user, to_user=to_user)
-            return poke.count
+            pokes = Poke.objects.all().filter(to_user=to_user)
+            sum = 0
+            for poke in pokes:
+                sum += poke.count
+            return sum
         except:
             return 0
 
     def get_poked_history(self, id):
         try:
-            pokes = Poke.objects.all()
+            pokes = Poke.objects.all().filter(to_user=id).order_by('-count')
             return pokes
         except:
             return {}

@@ -42,22 +42,15 @@ def logout(request):
 def pokes(request):
     if not 'user' in request.session:
         return redirect(reverse('main'))
-    poked_data = Poke.objects.get_poked_history(request.session['user']['id'])
-    pokes = []
-    count = 0
-    for poke in poked_data:
-        if poke.to_user.id == request.session['user']['id']:
-            pokes.append(poke)
-            count += 1
+    pokes = Poke.objects.get_poked_history(request.session['user']['id'])
 
     users = User.objects.all()
     for user in users:
         user.poke_history = Poke.objects.get_poke_history(request.session['user']['id'], user.id)
-
     context = {
         "users" : users,
         "pokes" : pokes,
-        "count" : count
+        "count" : len(pokes)
     }
     return render(request, 'pokeApp/pokes.html', context)
 
